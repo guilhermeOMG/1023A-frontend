@@ -8,6 +8,9 @@ categoria:string,
 }
 
 function Pagina() {
+  useEffect(()=>{
+
+  },[])
   const [id,setId] = useState("")
   const [nome,setNome] = useState("")
   const [preco,setPreco] = useState("")
