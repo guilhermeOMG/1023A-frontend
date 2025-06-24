@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import './Pagina.css'
 interface  ProdutosState{
   id:number,
@@ -8,22 +8,34 @@ categoria:string,
 }
 
 function Pagina() {
-  useEffect(()=>{
-
-  },[])
   const [id,setId] = useState("")
   const [nome,setNome] = useState("")
   const [preco,setPreco] = useState("")
   const [categoria,setCategoria] = useState("")
+  const [mensagem,setMensagem] = useState("")
   const [produtos,setProdutos]= useState<ProdutosState[]>([
-  {
-      id:1,
-      nome:"Caderno",
-      preco:20,
-      categoria:"Escolar"
-
-     }
+  
  ])
+ useEffect(()=>{
+  const buscaDados = async()=>{
+    try{
+const resultado = await fetch("http://localhost:800/produtos")
+if(resultado.status===200){
+  const dados = await resultado.json()
+  setProdutos(dados)
+}
+if(resultado.status===400){
+const erro = await resultado.json()
+setMensagem(erro.mensagem)
+//console.log(erro.mensagem)
+   }
+}
+catch(erro){
+  setMensagem("Fetch não funciona")
+  }
+}
+  buscaDados()
+  },[])
 
 function TrataCadastro(event:React.FormEvent<HTMLFormElement>){
   event.preventDefault();
@@ -71,6 +83,12 @@ function trataNome(event:React.ChangeEvent<HTMLInputElement>){
        </nav>
      </header>
      <main>
+      {mensagem&&
+     <div className="mensagem">
+      <p>{mensagem}</p>
+     </div>
+      }
+
       <div className="container-listagem">
       {produtos.map(produto=>{
         return(
