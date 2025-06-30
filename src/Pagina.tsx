@@ -37,16 +37,37 @@ catch(erro){
   buscaDados()
   },[])
 
-function TrataCadastro(event:React.FormEvent<HTMLFormElement>){
+async function TrataCadastro(event:React.FormEvent<HTMLFormElement>){
   event.preventDefault();
-const novoProduto:ProdutosState = {
-  id:parseInt(id),
-  nome:nome,
-  preco:parseFloat(preco),
-  categoria:categoria
+  const novoProduto:ProdutosState = {
+    id:parseInt(id),
+    nome:nome,
+    preco:parseFloat(preco),
+    categoria:categoria
 }
-setProdutos([...produtos,novoProduto])
-
+try{
+     const resposta = await fetch("http://localhost:8000/produtos",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(novoProduto)
+     })
+     if(resposta.status===200){
+  const dados = await resposta.json()
+  setProdutos([...produtos,novoProduto])
+}
+if(resposta.status===400){
+const erro = await resposta.json()
+setMensagem(erro.mensagem)
+//console.log(erro.mensagem)
+   }
+}
+catch(erro){
+  setMensagem("Fetch não funciona")
+  }
+}
+   
  }
  function trataId(event:React.ChangeEvent<HTMLInputElement>){
      setId(event.target.value)
